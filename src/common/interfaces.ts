@@ -7,15 +7,7 @@ export interface IbreedData{
     name:string
 }
 
-export interface Idetails{
-    name:string
-    img:string
-    description:string
-    origin:string
-    id:string
-}
-
 export interface IbreedsStates {
     breeds:Array<IbreedData>
-    details:any
+    catsByBreed:Array<any>
 }

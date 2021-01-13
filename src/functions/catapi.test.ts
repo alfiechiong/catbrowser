@@ -1,4 +1,4 @@
-import {listBreed,listCatByBreed,getCatDetails} from './catapi'
+import {listBreed,listCatByBreed} from './catapi'
 describe('catapi',()=>{
     test('listBreed apis should be defined', ()=>{
         expect(listBreed()).toBeDefined()
@@ -7,10 +7,4 @@ describe('catapi',()=>{
     test('listCatByBreed function should be defined', ()=>{
         expect(listCatByBreed('hima')).toBeDefined()
     })
-
-    test('getCatDetails function should be defined', ()=>{
-        expect(getCatDetails('asdad')).toBeDefined()
-    })
 })
-
-export {}

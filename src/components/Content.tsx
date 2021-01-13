@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation, useHistory } from "react-router-dom"
+import {useSelector} from 'react-redux'
 import queryString from 'query-string'
 import {listCatByBreed} from '../functions/catapi'
 import Card from 'react-bootstrap/Card'
@@ -7,30 +8,44 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import {setCurDetails, setCatByBreed} from '../redux/actions'
 import {Breed} from './Breed'
 import Header from './Header'
+import {setCatByBreed} from '../redux/actions'
+import { ImainReducer } from "../common/interfaces";
 
 const Content = ():JSX.Element=>{
     const {search} = useLocation()
     const history = useHistory()
     const {id, name} = queryString.parse(search)
-    const [catBrd, setCatBrd] = useState([])
+    const listByBreed = useSelector<ImainReducer,any >((state:ImainReducer)=>state.cats.catsByBreed)
+
+    const setCatsData = (catsByBreed:any)=>{
+        const catsMapped = catsByBreed.map((item:any)=>{
+            return  {
+                'name':item.breeds[0].name,
+                'img':item.url,
+                'temperament':item.breeds[0].temperament,
+                'description':item.breeds[0].description,
+                'origin':item.breeds[0].origin,
+                'id':item.id
+              }
+        })
+
+        setCatByBreed(catsMapped)
+    }
+
+    const getData = async (id:any): Promise<any> =>{
+        const catBreeds:any = await listCatByBreed(id)
+        console.log(catBreeds)
+        setCatsData(catBreeds)
+        }
   
     useEffect(()=>{
-      const getData = async (id:any): Promise<any> =>{
-        const catBreeds:any = await listCatByBreed(id)
-        console.log(catBreeds.data)
-        setCatBrd(catBreeds.data)
-        }
         getData(id ? id : "hima")
-
-        setCatByBreed(id ? id :'Hima')
     },[id])
     
-    const getDetails = async (id:string)=>{
-         setCurDetails(id)
-        history.push(`/details/${id}`);
+    const getDetails = async (item:any)=>{
+        history.push(`/details/${item.id}?name=${item.name}&description=${item.description}&img=${item.img}&temp=${item.temperament}&origin=${item.origin}`);
     } 
 
     return (
@@ -47,11 +62,11 @@ const Content = ():JSX.Element=>{
             </Row>
         <Row>
           
-          {catBrd && catBrd.map((item:any)=>{
+          {listByBreed && listByBreed.map((item:any)=>{
            return <Col key={item.id} ><Card style={{ width: '18rem', margin:"10px"}}>
-                    <Card.Img variant="top" src={item.url} />
+                    <Card.Img variant="top" src={item.img} />
                     <Card.Body>
-                        <Button variant="primary" onClick={()=>getDetails(item.id)} >Details</Button>
+                        <Button variant="primary" onClick={()=>getDetails(item)} >View Details</Button>
                     </Card.Body>
                     </Card>
                     </Col>

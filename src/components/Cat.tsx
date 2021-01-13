@@ -1,40 +1,30 @@
-import {useEffect} from  'react'
-import {useHistory, useParams} from 'react-router-dom'
+import {useHistory,useLocation} from 'react-router-dom'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
-import { useSelector } from 'react-redux'
-import { ImainReducer } from '../common/interfaces'
 import Alert from 'react-bootstrap/Alert'
-import {setCurDetails} from '../redux/actions'
-
-interface ParamTypes {
-    cid: string;
-  }
+import queryString from 'query-string'
 
 const Cat = ()=>{
     const history = useHistory()
-   let params = useParams<ParamTypes>()
-    useEffect(()=>{
-        setCurDetails(params.cid)
-    },[params]) 
+   const {search} = useLocation()
+   const {name,img,temp, description, origin}:any = queryString.parse(search)
 
-    const details = useSelector<ImainReducer, any['details']>((state:ImainReducer) => state.cats.details)
     return <Card style={{ width: '60vw',margin: `0 auto`}}>
         <Button variant="primary" onClick={()=>history.goBack()}> Back </Button>
-    <Card.Img variant="top" src={details.img}/>
+    <Card.Img variant="top" src={img}/>
     <Card.Body>
         <Alert variant="success">
-        <Alert.Heading>{details.name}</Alert.Heading>
+        <Alert.Heading>{name}</Alert.Heading>
             <p>
-                <b>Origin :</b>{details.origin}
+                <b>Origin :</b>{origin}
             </p>    
             <hr />
             <p>
-                {details.temperament}
+                {temp}
             </p>
             <hr />
             <p>
-                {details.description}
+                {description}
             </p>
         </Alert>
     </Card.Body>
